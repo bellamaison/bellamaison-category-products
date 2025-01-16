@@ -1,5 +1,5 @@
 {
-  "name": "bellamaison/bellamaison-category-products",
+  "name": "bellamaison/magento-category-products",
   "description": "Bellamaison Magento Category Products Module",
   "require": {
     "magento/framework": "*",
