@@ -1,0 +1,21 @@
+{
+  "name": "bellamaison/bellamaison-category-products",
+  "description": "Bellamaison Magento Category Products Module",
+  "require": {
+    "magento/framework": "*",
+    "bellamaison/magento-core": "*"
+  },
+  "type": "magento2-module",
+  "version": "1.0.0",
+  "license": [
+    "proprietary"
+  ],
+  "autoload": {
+    "files": [
+        "registration.php"
+    ],
+    "psr-4": {
+      "Bellamaison\\CategoryProducts\\": ""
+    }
+  }
+}

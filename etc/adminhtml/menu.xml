@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Bellamaison_CategoryProducts::main" title="Category Products" module="Bellamaison_CategoryProducts" sortOrder="100"
+             parent="Bellamaison_Core::main" resource="Bellamaison_CategoryProducts::main"/>
+
+        <add id="Bellamaison_CategoryProducts::importCsv" title="Import Csv" module="Bellamaison_CategoryProducts" sortOrder="100"
+             parent="Bellamaison_CategoryProducts::main" action="category_products/import/csv" resource="Bellamaison_CategoryProducts::importCsv"/>
+    </menu>
+</config>

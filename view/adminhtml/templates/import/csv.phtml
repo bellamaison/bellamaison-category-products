@@ -1,0 +1,27 @@
+<?php
+
+use Bellamaison\CategoryProducts\Block\Adminhtml\Import\Csv;
+
+/* @var $block Csv */
+
+?>
+<?php if($message = $block->getMessage()): ?>
+    <div style="color: <?=($block->getAction() == 'confirm')?'Red':'Green'?>;">
+        <?=$message?>
+        <?php if($block->getAction() == 'confirm'): ?>
+            <button onclick="location.href = '<?=$block->getConfirmUrl()?>';"><?=__('Yes')?></button>
+            <button onclick="location.href = '<?=$block->getCancelUrl()?>';"><?=__('Cancel')?></button>
+        <?php endif;?>
+    </div>
+<?php endif; ?>
+<br/>
+<?php if($block->getAction() == '' || $block->getAction() == 'success'): ?>
+<div style="margin:10px;border:1px solid #000;min-height: 100px;">
+    <form enctype="multipart/form-data" action="<?=$block->getPostUrl()?>" method="post" style="margin: 10px;">
+        <input type="hidden" name="form_key" value="<?=$block->getFormKey()?>">
+        <input type="hidden" name="upload" value="true">
+        <input type="file" required="required" name="file" id="file" title="Upload Custom Csv" class="input-text" data-validate="{required:true}">
+        <input type="submit">
+    </form>
+</div>
+<?php endif; ?>
