@@ -3,8 +3,6 @@
 namespace Bellamaison\CategoryProducts\Model;
 
 use Exception;
-use Magento\Framework\App\Cache\Frontend\Pool;
-use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\File\Csv;
 use Magento\Framework\App\ResourceConnection;
@@ -24,8 +22,8 @@ class UpdateCategoryProducts
     private AdapterInterface $_connection;
 
     private array $productIdMapping = [];
-    private TypeListInterface $_cacheTypeList;
-    private Pool $_cacheFrontendPool;
+    private array $reindexProductIds = [];
+    private array $reindexCategoryIds = [];
     private IndexerFactory $_indexerFactory;
     private CollectionFactory $_indexerCollectionFactory;
 
@@ -33,8 +31,6 @@ class UpdateCategoryProducts
      * @param DirectoryList $directory
      * @param Csv $csv
      * @param ResourceConnection $resource
-     * @param TypeListInterface $cacheTypeList
-     * @param Pool $cacheFrontendPool
      * @param IndexerFactory $indexerFactory
      * @param CollectionFactory $indexerCollectionFactory
      */
@@ -42,16 +38,12 @@ class UpdateCategoryProducts
         DirectoryList $directory,
         Csv $csv,
         ResourceConnection $resource,
-        TypeListInterface $cacheTypeList,
-        Pool $cacheFrontendPool,
         IndexerFactory $indexerFactory,
         CollectionFactory $indexerCollectionFactory
     ) {
         $this->_directory = $directory;
         $this->_csv = $csv;
         $this->_connection = $resource->getConnection();
-        $this->_cacheTypeList = $cacheTypeList;
-        $this->_cacheFrontendPool = $cacheFrontendPool;
         $this->_indexerFactory = $indexerFactory;
         $this->_indexerCollectionFactory = $indexerCollectionFactory;
     }
@@ -84,12 +76,14 @@ class UpdateCategoryProducts
                 {
                     $data = ['product_id' => $productId, 'category_id' => $categoryId, 'position' => self::DEFAULT_POSITION];
                     $this->_connection->insert(self::PRODUCT_CATEGORY_TABLE, $data);
+
+                    $this->reindexCategoryIds[] = $categoryId;
+                    $this->reindexProductIds[] = $productId;
                 }
             }
         }
 
         $this->reIndex();
-        $this->cleanCache();
 
         return ['result' => 'success', 'message' => count($this->productIdMapping).' products updated successfully.'];
     }
@@ -109,28 +103,14 @@ class UpdateCategoryProducts
 
     /**
      * @return void
-     */
-    private function cleanCache(): void
-    {
-        $types = array('block_html','collections','full_page');
-
-        foreach ($types as $type)
-        {
-            $this->_cacheTypeList->cleanType($type);
-        }
-
-        foreach ($this->_cacheFrontendPool as $cacheFrontend)
-        {
-            $cacheFrontend->getBackend()->clean();
-        }
-    }
-
-    /**
-     * @return void
      * @throws Exception
      */
     private function reIndex(): void
     {
+        $reindexIds = array_unique(array_merge($this->reindexCategoryIds,$this->reindexProductIds));
+
+        if(empty($reindexIds)) return;
+
         $allowedTypes = ['catalog_category_product','catalog_product_category','catalogsearch_fulltext'];
 
         $indexerCollection = $this->_indexerCollectionFactory->create();
@@ -141,7 +121,7 @@ class UpdateCategoryProducts
             if(in_array($type, $allowedTypes))
             {
                 $idx = $this->_indexerFactory->create()->load($type);
-                $idx->reindexAll();
+                $idx->reindexList($reindexIds);
             }
         }
     }
