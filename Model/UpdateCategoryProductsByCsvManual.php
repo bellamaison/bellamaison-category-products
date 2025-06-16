@@ -10,7 +10,7 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Indexer\Model\Indexer\CollectionFactory;
 use Magento\Indexer\Model\IndexerFactory;
 
-class UpdateCategoryProducts
+class UpdateCategoryProductsByCsvManual
 {
     const DATA_FILE_PATH = 'pub/media/bellamaison/category-products/product-updater/data.csv';
     const PRODUCT_TABLE = 'catalog_product_entity';

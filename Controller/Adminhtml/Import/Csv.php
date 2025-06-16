@@ -2,7 +2,7 @@
 
 namespace Bellamaison\CategoryProducts\Controller\Adminhtml\Import;
 
-use Bellamaison\CategoryProducts\Model\UpdateCategoryProducts as CategoryProductsUpdater;
+use Bellamaison\CategoryProducts\Model\UpdateCategoryProductsByCsvManual as CategoryProductsUpdater;
 use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
@@ -16,7 +16,7 @@ use Magento\Framework\App\Request\InvalidRequestException;
 use Magento\Framework\File\Csv as CsvFile;
 use Magento\Framework\Filesystem;
 use Magento\MediaStorage\Model\File\UploaderFactory;
-use Bellamaison\CategoryProducts\Model\UpdateCategoryProducts;
+use Bellamaison\CategoryProducts\Model\UpdateCategoryProductsByCsvManual;
 
 class Csv extends Action implements CsrfAwareActionInterface
 {
@@ -77,7 +77,7 @@ class Csv extends Action implements CsrfAwareActionInterface
                 $this->_redirect('category_products/import/csv');
             }
 
-            $message = __('Bu işlem sadece csv\'deki ürünleri ilgili kategoriye '.UpdateCategoryProducts::DEFAULT_POSITION.' sıra numarası ile bağlar, çıkarma yapmaz.');
+            $message = __('Bu işlem sadece csv\'deki ürünleri ilgili kategoriye '.UpdateCategoryProductsByCsvManual::DEFAULT_POSITION.' sıra numarası ile bağlar, çıkarma yapmaz.');
             $message .= __('<br/><br/>Ürün sıralamalarını güncellemek için Bellamaison -> Advanced Sorting -> <a href="%1">Import Csv</a> menüsünü kullanabilirsiniz.', $this->getUrl('advanced_sorting/import/csv'));
             $message .= __('<br/><br/>Yüklediğiniz dosya işlenecek, onaylıyor musunuz?');
 
