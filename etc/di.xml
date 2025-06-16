@@ -3,9 +3,9 @@
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="bellamaison_category_products_update_products" xsi:type="object">Bellamaison\CategoryProducts\Console\UpdateProducts</item>
+                <item name="bellamaison_category_products_update_products_by_csv_manual" xsi:type="object">Bellamaison\CategoryProducts\Console\UpdateProductsByCsvManual</item>
+                <item name="bellamaison_category_products_update_product_positions_by_csv_auto" xsi:type="object">Bellamaison\CategoryProducts\Console\UpdateProductPositionsByCsvAuto</item>
             </argument>
         </arguments>
     </type>
-
 </config>

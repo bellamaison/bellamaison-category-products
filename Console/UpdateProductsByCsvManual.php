@@ -6,15 +6,15 @@ use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
 use Symfony\Component\Console\Command\Command;
 use Magento\Framework\Exception\LocalizedException;
-use Bellamaison\CategoryProducts\Model\UpdateCategoryProducts as CategoryProductsUpdater;
+use Bellamaison\CategoryProducts\Model\UpdateCategoryProductsByCsvManual as CategoryProductsUpdater;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
-class UpdateProducts extends Command
+class UpdateProductsByCsvManual extends Command
 {
-    const COMMAND_NAME = 'category_products:update_products';
-    const COMMAND_DESCRIPTION = 'Category Products -> Update Products';
+    const COMMAND_NAME = 'category_products:update_products_by_csv_manual';
+    const COMMAND_DESCRIPTION = 'Category Products -> Update Products by csv manual';
 
     protected State $state;
     private CategoryProductsUpdater $categoryProductsUpdater;
