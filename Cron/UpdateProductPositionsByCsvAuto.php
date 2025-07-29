@@ -20,12 +20,14 @@ class UpdateProductPositionsByCsvAuto
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRhPzfIxWult93MSxunxH9qRd0NWxL-LmBn_Hn_ytGuNeUKlKG7dSaQlFv53zI0LdcjBTzz8dMMPsWU/pub?output=csv';
     const CSV_FILENAME = 'update_product_positions_by_csv_auto.csv';
     const CATEGORY_PRODUCTS_TABLE = 'catalog_category_product';
+    const POSITION_PREFIX = 10000;
 
     protected LoggerInterface $logger;
     private CategoryRepositoryInterface $categoryRepository;
     private AdapterInterface $connection;
     private array $categoryProducts = [];
     private array $productSkuId = [];
+    private array $productIdSku = [];
     private array $notFoundCategoryIds = [];
     private Csv $csv;
     private DirectoryList $directoryList;
@@ -95,6 +97,7 @@ class UpdateProductPositionsByCsvAuto
         foreach ($result as $row)
         {
             $this->productSkuId[$row['sku']] = (int)$row['entity_id'];
+            $this->productIdSku[(int)$row['entity_id']] = $row['sku'];
         }
     }
 
@@ -143,7 +146,7 @@ class UpdateProductPositionsByCsvAuto
 
             foreach ($categoryProducts as $productId)
             {
-                if(!$this->productExistsInCategory($productId, $parentCategoryId))
+                if(!empty($this->productIdSku[$productId]) && !$this->productExistsInCategory($productId, $parentCategoryId))
                 {
                     $insertArray[$parentCategoryId.'-'.$productId] = ['category_id' => $parentCategoryId, 'product_id' => $productId, 'position' => self::DEFAULT_POSITION];
                 }
@@ -172,7 +175,8 @@ class UpdateProductPositionsByCsvAuto
 
             $this->connection->update(
                 self::CATEGORY_PRODUCTS_TABLE,
-                ['position' => self::DEFAULT_POSITION]
+                ['position' => self::DEFAULT_POSITION],
+                'position = 0 or position > '.self::POSITION_PREFIX
             );
 
             foreach ($csvData as $row => $data)
@@ -183,12 +187,12 @@ class UpdateProductPositionsByCsvAuto
                     $position = (int)$data[1];
                     $productId = $this->productSkuId[$sku] ?? null;
 
-                    if($productId)
+                    if($productId && !empty($this->productIdSku[$productId]))
                     {
                         $this->connection->update(
                             self::CATEGORY_PRODUCTS_TABLE,
-                            ['position' => $position],
-                            ['product_id = ?' => $productId]
+                            ['position' => $position+self::POSITION_PREFIX],
+                            ['product_id = ?' => $productId, 'position > ?' => self::POSITION_PREFIX]
                         );
                     }
                 }
